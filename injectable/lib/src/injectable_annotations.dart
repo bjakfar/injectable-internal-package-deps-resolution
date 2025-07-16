@@ -1,5 +1,12 @@
 import 'package:meta/meta_meta.dart' show Target, TargetKind;
 
+@Target({TargetKind.library})
+class PackageDependenciesLoader {
+  const PackageDependenciesLoader();
+}
+
+const packageDependenciesLoader = PackageDependenciesLoader();
+
 /// // Marks a top-level function as an initializer function
 /// for configuring Get_it
 @Target({TargetKind.function})
@@ -210,12 +217,7 @@ const lazySingleton = LazySingleton();
 /// Used to register a dependency under a name
 /// instead of type also used to annotated
 /// named injected dependencies in constructors
-@Target({
-  TargetKind.classType,
-  TargetKind.parameter,
-  TargetKind.method,
-  TargetKind.getter
-})
+@Target({TargetKind.classType, TargetKind.parameter, TargetKind.method, TargetKind.getter})
 class Named {
   /// The name in which an instance is registered
   final String? name;
