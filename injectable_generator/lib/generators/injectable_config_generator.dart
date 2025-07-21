@@ -51,13 +51,13 @@ class InjectableConfigGenerator extends GeneratorForAnnotation<InjectableInit> {
     final injectableConfigFiles = Glob("$dirPattern/**.injectable.json");
     final injectableHolisticConfigFiles = Glob("$dirPattern/**.injectable_holistic.json");
 
-    Stream<AssetId> configAssets = buildStep.findAssets(injectableConfigFiles).asBroadcastStream();
-    if (await configAssets.isEmpty) {
-      configAssets = buildStep.findAssets(injectableHolisticConfigFiles);
+    var configAssets = await buildStep.findAssets(injectableConfigFiles).toList();
+    if (configAssets.isEmpty) {
+      configAssets = await buildStep.findAssets(injectableHolisticConfigFiles).toList();
     }
 
     final jsonData = <Map>[];
-    await for (final id in configAssets) {
+    for (final id in configAssets) {
       final json = jsonDecode(await buildStep.readAsString(id));
       jsonData.addAll([...json]);
     }
