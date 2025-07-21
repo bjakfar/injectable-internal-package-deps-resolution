@@ -56,14 +56,21 @@ class ImportableTypeResolverImpl extends ImportableTypeResolver {
   @override
   Set<String> resolveImports(Element? element) {
     final imports = <String>{};
-    // return early if source is null or element is a core type
-    if (element?.source == null || _isCoreDartType(element)) {
+    final maybeElement = element;
+
+    if (maybeElement == null || maybeElement.source == null || _isCoreDartType(maybeElement)) {
       return imports;
     }
-    libs.where((e) => e.exportNamespace.definedNames.values.contains(element));
-    for (var lib in libs) {
-      if (!_isCoreDartType(lib) &&
-          lib.exportNamespace.definedNames.values.contains(element)) {
+
+    // Matching element name and location should be unambiguous
+    final elementContainingLibs = libs.where(
+      (lib) => lib.exportNamespace.definedNames.values
+          .map((definedName) => (definedName.name, definedName.location?.encoding))
+          .contains((maybeElement.name, maybeElement.location?.encoding)),
+    );
+
+    for (var lib in elementContainingLibs) {
+      if (!_isCoreDartType(lib)) {
         imports.add(lib.identifier);
       }
     }

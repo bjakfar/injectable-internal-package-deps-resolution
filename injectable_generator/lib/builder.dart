@@ -1,9 +1,9 @@
 import 'package:build/build.dart';
+import 'package:injectable_generator/generators/injectable_holistic_generator.dart';
 import 'package:source_gen/source_gen.dart';
 
 import 'generators/injectable_config_generator.dart';
 import 'generators/injectable_generator.dart';
-import 'generators/injectable_package_deps_generator.dart';
 
 Builder injectableBuilder(BuilderOptions options) {
   return LibraryBuilder(
@@ -18,10 +18,11 @@ Builder injectableConfigBuilder(BuilderOptions options) {
       generatedExtension: '.config.dart', additionalOutputExtensions: ['.module.dart']);
 }
 
-Builder injectablePackageDepsBuilder(BuilderOptions options) {
+Builder injectableHolisticBuilder(BuilderOptions options) {
   return LibraryBuilder(
-    InjectablePackageDepsGenerator(),
-    generatedExtension: '.packdeps.dart',
+    InjectableHolisticGenerator(options.config),
+    generatedExtension: '.injectable_holistic.json',
+    formatOutput: (generated, _) => generated.replaceAll(RegExp(r'//.*|\s'), ''),
     allowSyntaxErrors: true,
   );
 }
